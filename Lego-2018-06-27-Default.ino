@@ -29,6 +29,10 @@ BLEUnsignedCharCharacteristic batteryLevelChar("2A19",  // standard 16-bit chara
 BLEIntCharacteristic motorReading("00211321-dc03-4f55-82b6-14a630bd8e2d",
 BLERead|BLENotify|BLEWrite);
 
+//motor properties
+BLEIntCharacteristic motorExtendChar("809ba7a9-13ad-4446-a005-bdc12ca93c76", BLERead|BLENotify|BLEWrite);
+BLEIntCharacteristic motorContractChar("2fad8a3f-e1a1-47cd-982b-24e13fbe9342", BLERead|BLENotify|BLEWrite);
+
 int oldBatteryLevel = 0;  // last battery level reading from analog input
 long previousMillis = 0;  // last time the battery level was checked, in ms
 
@@ -70,10 +74,15 @@ void setup() {
   batteryLevelChar.setValue(oldBatteryLevel);   // initial value for this characteristic
   
   BLE.setAdvertisedService(motorService);  // add the service UUID
-  motorService.addCharacteristic(motorReading); // add the battery level characteristic
+  motorService.addCharacteristic(motorReading); 
+  motorService.addCharacteristic(motorExtendChar);
+  motorService.addCharacteristic(motorContractChar);
   BLE.addService(motorService);   // Add the BLE Battery service
 
-  motorReading.setValue((int)-1);
+
+  motorReading.setValue(-1);
+  motorExtendChar.setValue(extendMotor);
+  motorContractChar.setValue(retractMotor);
   /* Start advertising BLE.  It will start continuously transmitting BLE
      advertising packets and will be visible to remote BLE central devices
      until it receives a new connection */
@@ -123,9 +132,18 @@ void setup() {
   myservoextend.write(extendMotor); 
   delayMode=1;
   timeMillisDelayMode=millis();}
+
+  myservoflex.write(retractMotor);  
+    myservoextend.write(extendMotor);
+
+    
 }
 
 void loop() {
+  //on loop reset the motor values
+  extendMotor = motorExtendChar.value();
+  retractMotor = motorContractChar.value();
+  
   // read accelerometer measurements from device, scaled to the configured range
   CurieIMU.readAccelerometerScaled(ax, ay, az);
   CurieIMU.readGyroScaled(gx, gy, gz);
