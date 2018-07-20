@@ -58,6 +58,7 @@ int retractMotor=150;//150 = fully extend fingers; 120 = partially extend finger
 
 int manualExtend = 0;
 int manualContract = 1;
+int test=0;
 
 void setup() {
   Serial.begin(9600);    // initialize serial communication
