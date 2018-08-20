@@ -40,8 +40,8 @@ int extendButtonOld=0;
 int extendButtonChange=0;
 int delayMode=0;
 int timeMillisDelayMode=0;
-int extendMotor=150;
-int retractMotor=50;
+int extendMotor=50;//50 = fully squeeze bottle; 80 = partially squeeze bottle
+int retractMotor=150;//150 = fully extend fingers; 120 = partially extend fingers
 int manualExtend = 0;
 int manualContract = 1;
 int manualRelax=-1;
@@ -90,10 +90,11 @@ void setup() {
   {myservoflex.write(retractMotor); 
   myservoextend.write(retractMotor);}
 
-  // if auto button is pressed up we are in auto mode, start auto mode with fingers extended
+  // if auto button is pressed up we are in auto mode, start auto mode with relaxed position
   else if (autoButton==0)
-  {myservoflex.write(retractMotor); 
-  myservoextend.write(extendMotor); 
+  {
+    myservoflex.write(retractMotor); 
+    myservoextend.write(retractMotor); 
   delayMode=1;
   timeMillisDelayMode=millis();}
 }
@@ -150,8 +151,9 @@ else{
   if (autoButton!=autoButtonOld){
     // if auto button is pressed down we are in manual mode, start manual mode with motors relaxed
     if (autoButton==1)
-    {myservoflex.write(retractMotor); 
-    myservoextend.write(retractMotor);}
+    {
+      motorReading.setValue(manualRelax);
+    }
 
     // if auto button is pressed up we are in auto mode, start auto mode with fingers extended
     else if (autoButton==0)
@@ -217,22 +219,25 @@ else{
     extendButtonChange=0;
   
   }
+  
+  
 
   if (autoButton==1){
   //update motors based off of the new characteristic values presented
   if ( motorReading.value() == manualContract){
-     myservoflex.write(extendMotor);
-    myservoextend.write(retractMotor);
-  }
-
-  if ( motorReading.value() == manualExtend){
     myservoflex.write(retractMotor);  
     myservoextend.write(extendMotor);
   }
+
+  if ( motorReading.value() == manualExtend){
+    myservoflex.write(extendMotor);
+    myservoextend.write(retractMotor);
+  }
   
   if ( motorReading.value() == manualRelax){
-    myservoflex.write(retractMotor);  
-    myservoextend.write(retractMotor);
+    myservoflex.write(extendMotor);  
+    myservoextend.write(extendMotor );
+    
   }
   }
   

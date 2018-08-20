@@ -95,25 +95,25 @@ void setup() {
   BLE.advertise();
   
   myservoflex.attach(A1);  // attaches the servo
-  myservoextend.attach(A0);  // attaches the servo 
+  myservoextend.attach(A2);  // attaches the servo 
   //myservoflex.write(40); 
   //myservoextend.write(40); 
   //Serial.begin(9600); // initialize Serial communication
   //while (!Serial);    // wait for the serial port to open
   timeMillis=millis();
   timeMillisMotionReset=millis();  
+  //pinMode(13, OUTPUT);
+  //digitalWrite(13,LOW);
+  pinMode(7, OUTPUT);
+  digitalWrite(7,HIGH);
+  pinMode(8, INPUT);
+  pinMode(9, OUTPUT);
+  digitalWrite(9,LOW);
+  pinMode(11, OUTPUT);
+  digitalWrite(11,LOW);
+  pinMode(12, INPUT);
   pinMode(13, OUTPUT);
-  digitalWrite(13,LOW);
-  pinMode(2, OUTPUT);
-  digitalWrite(2,LOW);
-  pinMode(3, INPUT);
-  pinMode(4, OUTPUT);
-  digitalWrite(4,HIGH);
-  pinMode(6, OUTPUT);
-  digitalWrite(6,LOW);
-  pinMode(7, INPUT);
-  pinMode(8, OUTPUT);
-  digitalWrite(8,HIGH);
+  digitalWrite(13,HIGH);
   
   CurieIMU.begin();
   // Set the accelerometer range to 2G
@@ -122,8 +122,8 @@ void setup() {
   CurieIMU.setGyroRange(250);
 
   //read buttons
-  autoButton=digitalRead(3);
-  extendButton=digitalRead(7);
+  autoButton=digitalRead(8);
+  extendButton=digitalRead(12);
 
   // if auto button is pressed down we are in manual mode, start manual mode with motors relaxed
   if (autoButton==1)
@@ -173,8 +173,8 @@ void loop() {
   timeMillis=millis();
    
   //read buttons
-  autoButton=digitalRead(3);
-  extendButton=digitalRead(7);
+  autoButton=digitalRead(8);
+  extendButton=digitalRead(12);
   
   //reset gyro biases when user is not moving, so that when the user is at rest gtot is 0
   if((gtot<5)&&(timeMillis>timeMillisGyroReset+20000)){
@@ -278,8 +278,8 @@ else{
   }
 
   if ( motorReading.value() == manualRelax && autoButton == 1){
-    extendMotor = 80;
-    retractMotor = 120;
+    extendMotor = 110;
+    retractMotor = 80;
     myservoflex.write(retractMotor);  
     myservoextend.write(extendMotor);
   }
@@ -296,7 +296,7 @@ else{
     // print the central's MAC address:
    // Serial.println(central.address());
     // turn on the LED to indicate the connection:
-    digitalWrite(13, HIGH);
+    //digitalWrite(13, HIGH);
 
     // check the battery level every 200ms
     // as long as the central is still connected:
@@ -309,7 +309,7 @@ else{
       }
     }
     // when the central disconnects, turn off the LED:
-    digitalWrite(13, LOW);
+    //digitalWrite(13, LOW);
     //Serial.print("Disconnected from central: ");
     //Serial.println(central.address());
   }
